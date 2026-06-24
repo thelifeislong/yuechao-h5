@@ -1,0 +1,594 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<title>粤超·广东足球梗王争霸</title>
+<style>
+/* ===== RESET & BASE ===== */
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
+html{font-size:16px;-webkit-text-size-adjust:100%}
+body{
+  font-family:-apple-system,BlinkMacSystemFont,"PingFang SC","Microsoft YaHei","Helvetica Neue",sans-serif;
+  background:#0a0a0f;color:#f0e6d2;overflow-x:hidden;line-height:1.6;
+  -webkit-tap-highlight-color:transparent;
+}
+img{max-width:100%;display:block}
+a{color:inherit;text-decoration:none}
+
+/* ===== CSS VARIABLES ===== */
+:root{
+  --red:#e63946;--red-deep:#c1121f;--gold:#ffd60a;--gold-soft:#f4a261;
+  --dark:#0a0a0f;--dark-2:#16161f;--dark-3:#1e1e2e;--dark-4:#2a2a3e;
+  --text:#f0e6d2;--text-dim:#8a8a9e;--text-bright:#ffffff;
+  --green:#52b788;--blue:#4cc9f0;--purple:#b5179e;
+  --gradient-red:linear-gradient(135deg,#e63946 0%,#c1121f 100%);
+  --gradient-gold:linear-gradient(135deg,#ffd60a 0%,#f4a261 100%);
+  --gradient-dark:linear-gradient(180deg,#0a0a0f 0%,#16161f 100%);
+}
+
+/* ===== LOADING SCREEN ===== */
+#loading{
+  position:fixed;inset:0;z-index:9999;background:var(--dark);
+  display:flex;flex-direction:column;align-items:center;justify-content:center;
+  transition:opacity .6s ease;
+}
+#loading.hide{opacity:0;pointer-events:none}
+.loading-ball{
+  width:64px;height:64px;border-radius:50%;background:var(--gradient-red);
+  position:relative;animation:ballBounce 1s ease-in-out infinite alternate;
+  box-shadow:0 0 30px rgba(230,57,70,.5);
+}
+.loading-ball::after{
+  content:'';position:absolute;top:30%;left:25%;width:50%;height:50%;
+  border-radius:50%;background:rgba(255,255,255,.15);
+}
+@keyframes ballBounce{0%{transform:translateY(0) scale(1)}100%{transform:translateY(-40px) scale(1.05)}}
+.loading-ball-shadow{
+  width:50px;height:8px;border-radius:50%;background:rgba(230,57,70,.3);
+  margin-top:10px;filter:blur(4px);animation:shadowPulse 1s ease-in-out infinite alternate;
+}
+@keyframes shadowPulse{0%{transform:scaleX(1);opacity:.3}100%{transform:scaleX(.5);opacity:.1}}
+.loading-text{
+  margin-top:30px;font-size:.9rem;color:var(--text-dim);text-align:center;
+  min-height:1.5em;transition:opacity .3s;
+}
+.loading-title{
+  margin-top:16px;font-size:1.6rem;font-weight:900;letter-spacing:2px;
+  background:var(--gradient-gold);-webkit-background-clip:text;-webkit-text-fill-color:transparent;
+  background-clip:text;
+}
+
+/* ===== CONTAINER ===== */
+#app{max-width:480px;margin:0 auto;position:relative;overflow:hidden}
+
+/* ===== SECTION COMMON ===== */
+.section{padding:60px 20px;position:relative}
+.section-title{
+  font-size:1.5rem;font-weight:900;text-align:center;margin-bottom:8px;
+  letter-spacing:1px;
+}
+.section-subtitle{
+  font-size:.85rem;color:var(--text-dim);text-align:center;margin-bottom:30px;
+}
+.section-divider{
+  width:40px;height:3px;background:var(--gradient-gold);margin:0 auto 30px;
+  border-radius:2px;
+}
+
+/* ===== HERO SECTION ===== */
+.hero{
+  min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;
+  position:relative;padding:40px 20px;text-align:center;overflow:hidden;
+}
+.hero::before{
+  content:'';position:absolute;inset:0;
+  background:radial-gradient(circle at 50% 30%,rgba(230,57,70,.15) 0%,transparent 60%),
+             radial-gradient(circle at 80% 70%,rgba(255,214,10,.08) 0%,transparent 50%);
+}
+.hero-badge{
+  display:inline-block;padding:6px 16px;border:1px solid var(--gold);border-radius:20px;
+  font-size:.75rem;color:var(--gold);margin-bottom:20px;letter-spacing:1px;
+  animation:fadeInDown .8s ease;
+}
+.hero-title{
+  font-size:3rem;font-weight:900;line-height:1.1;margin-bottom:12px;
+  background:linear-gradient(180deg,#ffd60a 0%,#e63946 100%);
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;
+  animation:fadeInUp .8s ease .2s both;text-shadow:0 0 40px rgba(230,57,70,.3);
+}
+.hero-subtitle{
+  font-size:1rem;color:var(--text-dim);margin-bottom:30px;
+  animation:fadeInUp .8s ease .4s both;
+}
+.hero-stats{
+  display:flex;gap:12px;animation:fadeInUp .8s ease .6s both;flex-wrap:wrap;justify-content:center;
+}
+.stat-card{
+  background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.08);
+  border-radius:12px;padding:12px 16px;min-width:90px;
+}
+.stat-num{font-size:1.4rem;font-weight:900;color:var(--gold)}
+.stat-label{font-size:.7rem;color:var(--text-dim);margin-top:2px}
+.hero-scroll{
+  position:absolute;bottom:30px;left:50%;transform:translateX(-50%);
+  font-size:.7rem;color:var(--text-dim);animation:bounce 2s infinite;text-align:center;
+}
+.hero-scroll::after{content:'↓';display:block;margin-top:4px;font-size:1.2rem}
+@keyframes bounce{0%,100%{transform:translateX(-50%) translateY(0)}50%{transform:translateX(-50%) translateY(-8px)}}
+
+/* ===== QUIZ SECTION ===== */
+.quiz-intro{
+  text-align:center;margin-bottom:24px;
+}
+.quiz-container{
+  background:var(--dark-2);border:1px solid rgba(255,255,255,.06);
+  border-radius:20px;padding:24px 20px;position:relative;overflow:hidden;
+}
+.quiz-progress{
+  display:flex;justify-content:space-between;align-items:center;margin-bottom:20px;
+}
+.quiz-progress-text{font-size:.8rem;color:var(--text-dim)}
+.quiz-progress-bar{flex:1;height:6px;background:var(--dark-4);border-radius:3px;margin-left:12px;overflow:hidden}
+.quiz-progress-fill{height:100%;background:var(--gradient-gold);border-radius:3px;transition:width .4s ease;width:0}
+.quiz-question{
+  font-size:1.2rem;font-weight:700;margin-bottom:6px;color:var(--text-bright);
+}
+.quiz-hint{font-size:.8rem;color:var(--text-dim);margin-bottom:20px}
+.quiz-options{display:flex;flex-direction:column;gap:10px}
+.quiz-option{
+  background:var(--dark-3);border:1.5px solid rgba(255,255,255,.06);border-radius:14px;
+  padding:14px 18px;font-size:.95rem;color:var(--text);cursor:pointer;
+  transition:all .25s ease;display:flex;align-items:center;gap:12px;
+}
+.quiz-option:active{transform:scale(.98)}
+.quiz-option .opt-label{
+  width:28px;height:28px;border-radius:50%;background:var(--dark-4);
+  display:flex;align-items:center;justify-content:center;font-size:.8rem;font-weight:700;
+  flex-shrink:0;transition:all .25s;
+}
+.quiz-option.correct{border-color:var(--green);background:rgba(82,183,136,.15)}
+.quiz-option.correct .opt-label{background:var(--green);color:#fff}
+.quiz-option.wrong{border-color:var(--red);background:rgba(230,57,70,.15)}
+.quiz-option.wrong .opt-label{background:var(--red);color:#fff}
+.quiz-option.disabled{pointer-events:none;opacity:.5}
+.quiz-option.disabled.correct,.quiz-option.disabled.wrong{opacity:1}
+.quiz-feedback{
+  margin-top:16px;padding:14px;border-radius:12px;font-size:.85rem;
+  display:none;animation:fadeInUp .4s ease;
+}
+.quiz-feedback.show{display:block}
+.quiz-feedback.correct{background:rgba(82,183,136,.1);border:1px solid rgba(82,183,136,.3);color:var(--green)}
+.quiz-feedback.wrong{background:rgba(230,57,70,.1);border:1px solid rgba(230,57,70,.3);color:var(--red)}
+.quiz-next{
+  margin-top:16px;width:100%;padding:14px;border:none;border-radius:14px;
+  background:var(--gradient-gold);color:var(--dark);font-size:1rem;font-weight:700;
+  cursor:pointer;transition:all .25s;display:none;
+}
+.quiz-next.show{display:block;animation:fadeInUp .4s ease}
+.quiz-next:active{transform:scale(.98)}
+.quiz-result{
+  text-align:center;padding:20px 0;display:none;
+}
+.quiz-result.show{display:block;animation:fadeInUp .5s ease}
+.quiz-result-score{
+  font-size:3rem;font-weight:900;background:var(--gradient-gold);
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;
+}
+.quiz-result-title{font-size:1.2rem;font-weight:700;margin:8px 0}
+.quiz-result-desc{font-size:.85rem;color:var(--text-dim);margin-bottom:20px}
+.quiz-restart{
+  padding:12px 28px;border:1.5px solid var(--gold);border-radius:24px;background:transparent;
+  color:var(--gold);font-size:.9rem;cursor:pointer;transition:all .25s;
+}
+.quiz-restart:active{transform:scale(.98)}
+
+/* ===== CITY CARDS ===== */
+.city-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.city-card{
+  background:var(--dark-2);border:1px solid rgba(255,255,255,.06);border-radius:16px;
+  padding:18px 14px;position:relative;overflow:hidden;cursor:pointer;
+  transition:all .3s ease;
+}
+.city-card:active{transform:scale(.97)}
+.city-card::before{
+  content:'';position:absolute;top:0;left:0;right:0;height:3px;
+  background:var(--city-color,var(--red));border-radius:16px 16px 0 0;
+}
+.city-name{font-size:1.1rem;font-weight:900;margin-bottom:4px;color:var(--text-bright)}
+.city-tag{font-size:.7rem;color:var(--city-color,var(--red));margin-bottom:10px;font-weight:600}
+.city-quote{font-size:.78rem;color:var(--text-dim);line-height:1.5}
+.city-card .city-emoji{position:absolute;top:12px;right:12px;font-size:1.2rem;opacity:.6}
+
+/* ===== POSTER GALLERY ===== */
+.gallery-scroll{
+  display:flex;gap:14px;overflow-x:auto;padding:4px 20px 12px;
+  scroll-snap-type:x mandatory;-webkit-overflow-scrolling:touch;
+  scrollbar-width:none;-ms-overflow-style:none;
+}
+.gallery-scroll::-webkit-scrollbar{display:none}
+.gallery-item{
+  flex-shrink:0;width:260px;scroll-snap-align:center;
+  border-radius:16px;overflow:hidden;position:relative;
+  background:var(--dark-2);border:1px solid rgba(255,255,255,.06);
+}
+.gallery-item img{width:100%;height:auto;transition:transform .3s}
+.gallery-item:active img{transform:scale(1.03)}
+.gallery-caption{
+  padding:12px 14px;
+}
+.gallery-caption-title{font-size:.9rem;font-weight:700;color:var(--gold)}
+.gallery-caption-desc{font-size:.72rem;color:var(--text-dim);margin-top:2px}
+
+/* ===== MEME WALL ===== */
+.meme-wall{display:flex;flex-direction:column;gap:10px}
+.meme-item{
+  background:var(--dark-2);border-left:3px solid var(--gold);border-radius:0 12px 12px 0;
+  padding:12px 16px;font-size:.9rem;color:var(--text);position:relative;
+  transition:all .3s;
+}
+.meme-item:active{background:var(--dark-3);transform:translateX(4px)}
+.meme-item .meme-tag{
+  display:inline-block;font-size:.65rem;padding:2px 8px;border-radius:10px;
+  background:rgba(255,214,10,.15);color:var(--gold);margin-bottom:6px;font-weight:600;
+}
+
+/* ===== SHARE SECTION ===== */
+.share-section{
+  text-align:center;padding:50px 20px 60px;
+  background:radial-gradient(circle at 50% 50%,rgba(230,57,70,.1) 0%,transparent 70%);
+}
+.share-title{
+  font-size:1.8rem;font-weight:900;margin-bottom:12px;
+  background:var(--gradient-gold);-webkit-background-clip:text;-webkit-text-fill-color:transparent;
+  background-clip:text;
+}
+.share-desc{font-size:.85rem;color:var(--text-dim);margin-bottom:24px}
+.share-btn{
+  display:inline-block;padding:14px 36px;border-radius:28px;
+  background:var(--gradient-red);color:#fff;font-size:1rem;font-weight:700;
+  cursor:pointer;transition:all .25s;border:none;
+  box-shadow:0 4px 20px rgba(230,57,70,.4);
+}
+.share-btn:active{transform:scale(.97)}
+.share-footer{
+  margin-top:30px;font-size:.7rem;color:var(--text-dim);line-height:1.8;
+}
+
+/* ===== ANIMATIONS ===== */
+@keyframes fadeInUp{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}
+@keyframes fadeInDown{from{opacity:0;transform:translateY(-20px)}to{opacity:1;transform:translateY(0)}}
+@keyframes fadeIn{from{opacity:0}to{opacity:1}}
+.reveal{opacity:0;transform:translateY(30px);transition:opacity .6s ease,transform .6s ease}
+.reveal.visible{opacity:1;transform:translateY(0)}
+
+/* ===== PARTICLES ===== */
+.particle{position:absolute;border-radius:50%;pointer-events:none;opacity:.3}
+</style>
+</head>
+<body>
+
+<!-- LOADING -->
+<div id="loading">
+  <div class="loading-ball"></div>
+  <div class="loading-ball-shadow"></div>
+  <div class="loading-text" id="loadingText">波都未踢，茶先饮紧...</div>
+  <div class="loading-title">粤超联赛</div>
+</div>
+
+<!-- APP -->
+<div id="app">
+  <!-- Content sections will be added here -->
+</div>
+
+<script>
+// === LOADING ===
+const loadingTexts=[
+  '波都未踢，茶先饮紧...',
+  '醒狮换紧衫，等阵出场...',
+  '讲波佬润紧喉咙...',
+  '球迷买紧烧鹅腿入场...'
+];
+let ltIdx=0;
+const ltEl=document.getElementById('loadingText');
+const ltTimer=setInterval(()=>{
+  ltIdx=(ltIdx+1)%loadingTexts.length;
+  ltEl.style.opacity=0;
+  setTimeout(()=>{ltEl.textContent=loadingTexts[ltIdx];ltEl.style.opacity=1},300);
+},1800);
+
+window.addEventListener('load',()=>{
+  setTimeout(()=>{
+    document.getElementById('loading').classList.add('hide');
+    clearInterval(ltTimer);
+    initApp();
+  },2000);
+});
+
+// === DATA ===
+const quizData=[
+  {q:'「踩波车」是什么意思？',hint:'含"车"字，但不是真的开车',options:['自己踩到球上摔倒','开着车去踢球','球像车一样飞过来','踩着球开车走'],answer:0,explain:'踩波车 = 自己踩到球上失去平衡摔倒，广东球迷最爱看的失误集锦素材😂'},
+  {q:'「食波饼」是什么意思？',hint:'跟食物有关，但不是好吃的',options:['吃球场卖的饼','被足球砸中脸部','用球做了一张饼','球饿了要吃东西'],answer:1,explain:'食波饼 = 被球正面砸中面部，像被一块饼糊脸，自带食物谐音的黑色幽默🥞'},
+  {q:'「世界波」是什么意思？',hint:'含"世界"二字，级别很高',options:['踢到世界尽头','世界级精彩进球','世界杯的球','全世界都在踢波'],answer:1,explain:'世界波 = 世界级精彩进球！粤语解说最激情的瞬间："世界波啊！！劲过老虎！！"🔥'},
+  {q:'「执死鸡」是什么意思？',hint:'含"鸡"字，但不是真的抓鸡',options:['抓住一只鸡','补射空门得分','胆小如鸡不敢踢','把球踢成鸡形'],answer:1,explain:'执死鸡 = 别人射门失败后你补射空门得分，捡了个大便宜！广东人叫"执到宝"🐔'},
+  {q:'「医院波」是什么意思？',hint:'跟医院有关...危险！',options:['球踢进了医院','传球落点差会害队友受伤','球员要送医院','在医院里踢球'],answer:1,explain:'医院波 = 传球落点太差，队友去接可能被撞进医院，妥妥的坑队友传球🏥'},
+  {q:'「黄油手」是什么意思？',hint:'跟手有关，跟油腻有关',options:['手上有黄油打滑','守门员接球脱手','球员手涂了黄油','吃黄油长大的手'],answer:1,explain:'黄油手 = 守门员接球时手打滑脱手，球从手中滑进球门，门将最耻辱的瞬间🧈'},
+  {q:'「挞Q」是什么意思？',hint:'源自桌球术语',options:['打台球','射门踢偏没踢正','球变成Q字形','用Q弹的力踢球'],answer:1,explain:'挞Q = 射门或传球时脚没踢正部位，球受力不足或变向，源自桌球术语，"挞Q大王"就是你！🎱'},
+  {q:'「屙蛋」是什么意思？',hint:'含"蛋"字，跟守门员有关',options:['生了蛋','球从守门员胯下穿过进门','球员蛋碎了','球变成了蛋'],answer:1,explain:'屚蛋 = 球从守门员两腿之间穿过进门，门将最耻辱的丢球方式，没有之一😱'},
+  {q:'「通坑渠」是什么意思？',hint:'跟水渠有关，跟穿过去有关',options:['疏通下水道','带球穿过对方两腿之间','球掉进坑渠','踩过坑渠踢球'],answer:1,explain:'通坑渠 = 带球穿过对方球员两腿之间（穿裆），技高人胆大的过人方式⚡'},
+  {q:'「收山脚」是什么意思？',hint:'含"山"字，跟终结有关',options:['踢到山上','一脚终结比赛（绝杀）','收山不踢了','把山踢平'],answer:1,explain:'收山脚 = 一脚终结比赛，绝杀进球！"收山"在粤语里是收工的意思，这球踢完就收工🏆'}
+];
+
+const cityData=[
+  {name:'广州',color:'#e63946',emoji:'🍵',tag:'省会·饮茶大佬',quote:'踢波唔得，饮茶我第一！省城主场，谁来都系客'},
+  {name:'深圳',color:'#4cc9f0',emoji:'💼',tag:'特区·搞钱之城',quote:'你饮茶我搞钱，球场上见真章。赢了搞钱，输了也搞钱'},
+  {name:'佛山',color:'#ffd60a',emoji:'🦁',tag:'功夫·无影脚之城',quote:'无影脚射门，门将睇到傻。功夫之城，让一追三是基本操作'},
+  {name:'湛江',color:'#52b788',emoji:'🦐',tag:'冠军·海鲜之都',quote:'海鲜，还有省超冠军奖杯。叫声湛哥，赢完请你食大虾'},
+  {name:'梅州',color:'#b5179e',emoji:'⚽',tag:'球乡·客家雄狮',quote:'不好意思，我们这里小孩3岁就开始踢波了。足球之乡出品，必属精品'},
+  {name:'潮州',color:'#f4a261',emoji:'🍵',tag:'逆袭·功夫茶之城',quote:'先饮杯功夫茶，再慢慢赢你。功夫茶要慢慢泡，球要慢慢赢'},
+  {name:'云浮',color:'#8d99ae',emoji:'🪨',tag:'石材·绝杀之城',quote:'石头缝里也能蹦出绝杀。云浮石材，硬到绝杀省城'},
+  {name:'东莞',color:'#fb8500',emoji:'🏭',tag:'制造·三哥之城',quote:'三哥是我，不是无影脚！东莞制造，进球制造'}
+];
+
+const posterData=[
+  {file:'poster-1-yue-yin-yue-qiang.png',title:'粤饮粤强',desc:'茶楼×足球，饮茶谐音梗'},
+  {file:'poster-2-bo-xi-yuan-ge.png',title:'波系圆嘅',desc:'巨型足球闯入骑楼老街'},
+  {file:'poster-3-fo-shan-wu-ying-jiao.png',title:'佛山无影脚',desc:'功夫飞踢射门，武侠漫画风'},
+  {file:'poster-4-yin-cha-gao-qian.png',title:'你饮茶我搞钱',desc:'广州vs深圳，街机格斗VS屏'},
+  {file:'poster-5-shi-bo-bing.png',title:'食波饼',desc:'波普漫画风，被球砸脸瞬间'},
+  {file:'poster-6-you-yi-nian-yi.png',title:'友谊第廿一',desc:'水墨长卷，21城散装混战'},
+  {file:'poster-7-jiao-zhan-ge.png',title:'叫声湛哥',desc:'港风霓虹，湛江海鲜冠军'},
+  {file:'poster-8-shi-chu-jue-sha.png',title:'石出绝杀',desc:'美漫英雄，云浮绝杀广州'}
+];
+
+const memeData=[
+  {tag:'谐音梗',text:'粤饮粤强 = 越饮越强，饮完靓茶踢波劲过老虎'},
+  {tag:'金句',text:'波系圆嘅，粤超乜都有可能！'},
+  {tag:'城市梗',text:'比赛第一，友谊第廿一！广东21市谁也不服谁'},
+  {tag:'霸气梗',text:'叫湛哥！海鲜冠军踢到你服，赢完请你食大虾'},
+  {tag:'逆袭梗',text:'云浮石材，硬到绝杀省城！石头缝里蹦出奇迹'},
+  {tag:'术语梗',text:'食波饼啦你！被球糊脸嘅滋味，试过先知几好彩'},
+  {tag:'松弛梗',text:'三点啦，踢波先啦！广东人踢波唔急，饮完茶再讲'},
+  {tag:'互怼梗',text:'佛山无影脚，东莞三哥波——两个城市的外号碰撞'},
+  {tag:'功夫梗',text:'佛山无影脚，门将睇到傻！一脚射门快过闪电'},
+  {tag:'搞钱梗',text:'深圳队：赢了搞钱，输了也搞钱，踢球只是副业'},
+  {tag:'球乡梗',text:'梅州：我们这里小孩3岁就开始踢波了，降维打击'},
+  {tag:'美食梗',text:'虾饺射门弯弯的，烧卖助攻蒸蒸日上，肠粉防线滑不溜秋'},
+  {tag:'世仇梗',text:'冇假波，全世仇！广东城市间的恩怨延伸到球场'},
+  {tag:'反转梗',text:'潮州：先饮杯功夫茶，再慢慢赢你。副班长也能逆袭'}
+];
+
+// === BUILD APP ===
+function initApp(){
+  const app=document.getElementById('app');
+  app.innerHTML=`
+    <!-- HERO -->
+    <section class="hero">
+      <div class="hero-badge">广东体育城市联赛 · AI创意作品</div>
+      <h1 class="hero-title">粤超<br>梗王争霸</h1>
+      <p class="hero-subtitle">21城散装广东，球场见真章<br>波系圆嘅，乜都有可能！</p>
+      <div class="hero-stats">
+        <div class="stat-card"><div class="stat-num">21</div><div class="stat-label">城市参赛</div></div>
+        <div class="stat-card"><div class="stat-num">20亿+</div><div class="stat-label">话题浏览</div></div>
+        <div class="stat-card"><div class="stat-num">3.4万</div><div class="stat-label">单场最高</div></div>
+      </div>
+      <div class="hero-scroll">向下滑动探索</div>
+    </section>
+
+    <!-- INTRO -->
+    <section class="section reveal">
+      <div class="section-title">⚽ 粤超联赛</div>
+      <div class="section-subtitle">广东省城市足球超级联赛</div>
+      <div class="section-divider"></div>
+      <div style="background:var(--dark-2);border-radius:16px;padding:20px;font-size:.9rem;line-height:1.8;color:var(--text);">
+        <p style="margin-bottom:12px">广东省省内最高水平十一人制业余足球赛事，<b style="color:var(--gold)">21个地级市</b>同场竞技。</p>
+        <p style="margin-bottom:12px">2025赛季全网话题浏览量超<b style="color:var(--gold)">20.8亿</b>，决赛单场观众3.4万人，门票1小时售罄。</p>
+        <p>2026赛季升级为主客场制，分<b style="color:var(--red)">东区</b>vs<b style="color:var(--blue)">西区</b>——散装广东，球场上见真章！</p>
+      </div>
+    </section>
+
+    <!-- QUIZ -->
+    <section class="section reveal" id="quizSection">
+      <div class="section-title">🧠 粤语足球术语挑战</div>
+      <div class="section-subtitle">你系真球迷定系假球迷？来测下！</div>
+      <div class="section-divider"></div>
+      <div class="quiz-container" id="quizContainer">
+        <div class="quiz-progress">
+          <span class="quiz-progress-text" id="quizProgressText">第 1 / 10 题</span>
+          <div class="quiz-progress-bar"><div class="quiz-progress-fill" id="quizProgressFill"></div></div>
+        </div>
+        <div id="quizBody"></div>
+      </div>
+    </section>
+
+    <!-- CITY CARDS -->
+    <section class="section reveal">
+      <div class="section-title">🏙️ 散装广东城市争霸</div>
+      <div class="section-subtitle">21城各怀绝技，谁是你心中的粤超一哥？</div>
+      <div class="section-divider"></div>
+      <div class="city-grid" id="cityGrid"></div>
+    </section>
+
+    <!-- POSTER GALLERY -->
+    <section class="section reveal" style="padding-left:0;padding-right:0">
+      <div class="section-title" style="padding:0 20px">🎨 梗王海报画廊</div>
+      <div class="section-subtitle" style="padding:0 20px">8张海报，8种风格，AI全程创作</div>
+      <div class="section-divider" style="margin-left:auto;margin-right:auto"></div>
+      <div class="gallery-scroll" id="galleryScroll"></div>
+    </section>
+
+    <!-- MEME WALL -->
+    <section class="section reveal">
+      <div class="section-title">🔥 造梗墙</div>
+      <div class="section-subtitle">粤超金句合集，句句都有广东味道</div>
+      <div class="section-divider"></div>
+      <div class="meme-wall" id="memeWall"></div>
+    </section>
+
+    <!-- SHARE -->
+    <section class="share-section reveal">
+      <div class="share-title">波系圆嘅<br>乜都有可能</div>
+      <div class="share-desc">粤超联赛 · 广东足球梗王争霸<br>用AI创意，为广东足球造梗造势</div>
+      <button class="share-btn" onclick="shareAction()">分享给球友</button>
+      <div class="share-footer">
+        广东体育城市联赛 AI创意比赛作品<br>
+        全部海报由AI生成 · 粤超联赛创意梗库<br>
+        © 2026 粤超梗王争霸
+      </div>
+    </section>
+  `;
+
+  buildQuiz();
+  buildCities();
+  buildGallery();
+  buildMemes();
+  initReveal();
+}
+
+// === QUIZ ===
+let quizIdx=0,quizScore=0,quizAnswered=false;
+function buildQuiz(){
+  renderQuestion();
+}
+function renderQuestion(){
+  quizIdx=0;quizScore=0;quizAnswered=false;
+  showQuestion();
+}
+function showQuestion(){
+  if(quizIdx>=quizData.length){showQuizResult();return}
+  const q=quizData[quizIdx];
+  const body=document.getElementById('quizBody');
+  document.getElementById('quizProgressText').textContent=`第 ${quizIdx+1} / ${quizData.length} 题`;
+  document.getElementById('quizProgressFill').style.width=`${(quizIdx/quizData.length)*100}%`;
+  quizAnswered=false;
+  let optsHTML='';
+  const labels=['A','B','C','D'];
+  q.options.forEach((opt,i)=>{
+    optsHTML+=`<div class="quiz-option" onclick="answerQuiz(${i})"><span class="opt-label">${labels[i]}</span><span>${opt}</span></div>`;
+  });
+  body.innerHTML=`
+    <div class="quiz-question">${q.q}</div>
+    <div class="quiz-hint">💡 ${q.hint}</div>
+    <div class="quiz-options">${optsHTML}</div>
+    <div class="quiz-feedback" id="quizFeedback"></div>
+    <button class="quiz-next" id="quizNext" onclick="nextQuestion()">${quizIdx<quizData.length-1?'下一题':'查看结果 →'}</button>
+  `;
+}
+function answerQuiz(i){
+  if(quizAnswered)return;
+  quizAnswered=true;
+  const q=quizData[quizIdx];
+  const opts=document.querySelectorAll('.quiz-option');
+  opts.forEach((el,idx)=>{
+    el.classList.add('disabled');
+    if(idx===q.answer)el.classList.add('correct');
+    if(idx===i&&i!==q.answer)el.classList.add('wrong');
+  });
+  const fb=document.getElementById('quizFeedback');
+  if(i===q.answer){
+    quizScore++;
+    fb.className='quiz-feedback show correct';
+    fb.innerHTML='✅ 答对了！'+q.explain;
+  }else{
+    fb.className='quiz-feedback show wrong';
+    fb.innerHTML='❌ 错了！正确答案：'+q.options[q.answer]+'。'+q.explain;
+  }
+  document.getElementById('quizNext').classList.add('show');
+}
+function nextQuestion(){
+  quizIdx++;
+  showQuestion();
+}
+function showQuizResult(){
+  document.getElementById('quizProgressFill').style.width='100%';
+  document.getElementById('quizProgressText').textContent='挑战完成！';
+  const body=document.getElementById('quizBody');
+  let title,desc;
+  if(quizScore>=9){title='粤超梗王！';desc='你对粤语足球文化了如指掌，系真正嘅广东球迷！🏆'}
+  else if(quizScore>=7){title='资深球迷';desc:'好嘢！粤语足球术语难唔到你，继续努力！💪'}
+  else if(quizScore>=5){title:'入门球迷';desc:'都算识嘢嘅，多D睇粤超就梗王啦！⚽'}
+  else if(quizScore>=3){title='路过的靓仔';desc:'睇嚟你要多饮几杯茶补下课咯～🍵'}
+  else{title='波都不识踢';desc='你都系乖乖饮茶算啦，踢波唔啱你😂'}
+  body.innerHTML=`
+    <div class="quiz-result show">
+      <div class="quiz-result-score">${quizScore}/${quizData.length}</div>
+      <div class="quiz-result-title">${title}</div>
+      <div class="quiz-result-desc">${desc}</div>
+      <button class="quiz-restart" onclick="renderQuestion()">再战一次 🔄</button>
+    </div>
+  `;
+}
+
+// === CITIES ===
+function buildCities(){
+  const grid=document.getElementById('cityGrid');
+  grid.innerHTML=cityData.map(c=>`
+    <div class="city-card" style="--city-color:${c.color}" onclick="cityTap('${c.name}')">
+      <span class="city-emoji">${c.emoji}</span>
+      <div class="city-name">${c.name}</div>
+      <div class="city-tag">${c.tag}</div>
+      <div class="city-quote">"${c.quote}"</div>
+    </div>
+  `).join('');
+}
+function cityTap(name){
+  const card=event.currentTarget;
+  card.style.transform='scale(.95)';
+  setTimeout(()=>card.style.transform='',200);
+}
+
+// === GALLERY ===
+function buildGallery(){
+  const scroll=document.getElementById('galleryScroll');
+  scroll.innerHTML=posterData.map(p=>`
+    <div class="gallery-item">
+      <img src="${p.file}" alt="${p.title}" loading="lazy" onerror="this.style.display='none'">
+      <div class="gallery-caption">
+        <div class="gallery-caption-title">${p.title}</div>
+        <div class="gallery-caption-desc">${p.desc}</div>
+      </div>
+    </div>
+  `).join('');
+}
+
+// === MEMES ===
+function buildMemes(){
+  const wall=document.getElementById('memeWall');
+  wall.innerHTML=memeData.map((m,i)=>`
+    <div class="meme-item" style="animation:fadeInUp .4s ease ${i*0.05}s both">
+      <span class="meme-tag">${m.tag}</span>
+      <div>${m.text}</div>
+    </div>
+  `).join('');
+}
+
+// === REVEAL ON SCROLL ===
+function initReveal(){
+  const observer=new IntersectionObserver((entries)=>{
+    entries.forEach(e=>{
+      if(e.isIntersecting){e.target.classList.add('visible')}
+    });
+  },{threshold:0.1});
+  document.querySelectorAll('.reveal').forEach(el=>observer.observe(el));
+}
+
+// === SHARE ===
+function shareAction(){
+  if(navigator.share){
+    navigator.share({title:'粤超·广东足球梗王争霸',text:'波系圆嘅，乜都有可能！粤超联赛AI创意H5',url:location.href});
+  }else{
+    const btn=event.currentTarget;
+    const orig=btn.textContent;
+    btn.textContent='已复制链接 ✓';
+    const ta=document.createElement('textarea');
+    ta.value=location.href;document.body.appendChild(ta);ta.select();
+    try{document.execCommand('copy')}catch(e){}
+    document.body.removeChild(ta);
+    setTimeout(()=>btn.textContent=orig,2000);
+  }
+}
+</script>
+</body>
+</html>
